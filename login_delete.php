@@ -1,21 +1,10 @@
+<?php include "db.php";?>
+<?php include "functions.php";?>
+
 <?php
 if(isset($_POST['submit'])) {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
-
-$connection = mysqli_connect('localhost', 'root', '', 'loginapp');
-    if($connection) {
-        echo "we are connected";
-    } else {
-        die("Database connection failed");
-    }
-
- /*       if($username && $password) {     
-    echo $username;
-    echo $password;
-        } else {
-            echo "this field cannot be blank";
-        }*/
+    
+    deleteRows();
 }
 ?>
 
@@ -28,9 +17,11 @@ $connection = mysqli_connect('localhost', 'root', '', 'loginapp');
     </head>
     <body>
     
+    
     <div class="container">
         <div class="col-sm-6">
-            <form action="login.php" method="post">
+            
+            <form action="login_delete.php" method="post">
                 <div class="form-group">
                     <label for="username">Username</label>
                 <input type="text" name="username" class="form-control">
@@ -40,8 +31,19 @@ $connection = mysqli_connect('localhost', 'root', '', 'loginapp');
                     <label for="password">Password</label>
                 <input type="password" name="password" class="form-control">
                 </div>
-                <input class="btn btn-primary" type="submit" name="submit" value="Submit">
+                
+                <div class="form-group">
+                
+                    <select name="id" id="">
+                    <?php
+                        showAllData();
+                    ?>
+                    </select>
+                </div>                
+                
+                <input class="btn btn-primary" type="submit" name="submit" value="Delete">
             </form>
+            
         </div>
         
         

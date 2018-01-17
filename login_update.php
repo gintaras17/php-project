@@ -4,18 +4,7 @@
 <?php
 if(isset($_POST['submit'])) {
     
-$username = $_POST['username'];
-$password = $_POST['password'];
-$id = $_POST['id'];
-    
-$query = "UPDATE users SET ";
-$query .= "username = '$username', ";
-$query .= "password = '$password' ";
-$query .= "WHERE id = $id ";
-    $result = mysqli_query($connection, $query);
-    if(!$result) {
-        die("QUERY FAILED" . mysqli_error($connection));
-    }
+    UpdateTable();
 }
 ?>
 
@@ -27,6 +16,7 @@ $query .= "WHERE id = $id ";
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
     </head>
     <body>
+    
     
     <div class="container">
         <div class="col-sm-6">
