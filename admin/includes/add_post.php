@@ -1,30 +1,35 @@
+
 <?php
- 
 
 if(isset($_POST['create_post'])) {
-    $post_title = $_POST['title'];
-    $post_author = $_POST['author'];
+    $post_title = escape($_POST['title']);
+    $post_author = escape($_POST['post_author']);
     $post_category_id = $_POST['post_category'];
     $post_status = $_POST['post_status'];
-    
+
     $post_image = $_FILES['image']['name'];
     $post_image_temp = $_FILES['image']['tmp_name'];
-    
+
     $post_tags = $_POST['post_tags'];
     $post_content = $_POST['post_content'];
     $post_date = date('d-m-y');
 //    $post_comment_count = 4;
-    
+
     move_uploaded_file($post_image_temp, "../images/$post_image" );
-    
-$query = "INSERT INTO posts (post_category_id, post_title, post_author, post_date,post_image,post_content,post_tags,post_status) ";
-$query .= "VALUES ({$post_category_id},'{$post_title}','{$post_author}',now(),'{$post_image}','{$post_content}','{$post_tags}', '{$post_status}') ";    //visi kintamieji cia paimti is auksciau esancios funkcijos su isset. ir visi kintamieji yra kabutese '', nes jie yra strings, isskyrus nereikia pirmajam post_category_id, nes tai ne string, o number
+
+    $query = "INSERT INTO posts (post_category_id, post_title, post_author, post_date,post_image,post_content,post_tags,post_status) ";
+    $query .= "VALUES ({$post_category_id},'{$post_title}','{$post_author}',now(),'{$post_image}','{$post_content}','{$post_tags}', '{$post_status}') ";    //visi kintamieji cia paimti is auksciau esancios funkcijos su isset. ir visi kintamieji yra kabutese '', nes jie yra strings, isskyrus nereikia pirmajam post_category_id, nes tai ne string, o number
     //taip pat antroje $query eiluteje yra now() funkcija -->ji turi daug alternatyvu, bet tai kita tema<--, kuri padaro grazia data duombazej -->galima apie ja paskaityti php.net<--
-    
+
     $create_post_query = mysqli_query($connection, $query);
-    
+
     confirmQuery($create_post_query);
     
+   $the_post_id = mysqli_insert_id($connection);    //si funkcija istrauks paskutine sukurta id is lenteles duombazej, sita thepostid paimta is 30 eiles $the_post_id
+    
+        echo "<p class='bg-success'>Post created. <a href='../post.php?p_id={$the_post_id}'>View post</a> or <a href='posts.php'>Edit more posts</a></p>";
+
+
 }
 
 
@@ -42,7 +47,7 @@ $query .= "VALUES ({$post_category_id},'{$post_title}','{$post_author}',now(),'{
         <?php
                 $query = "SELECT * FROM categories";
                 $select_categories = mysqli_query($connection,$query);
-        
+
                 confirmQuery($select_categories);
 
                 while($row = mysqli_fetch_assoc($select_categories)) {
@@ -60,8 +65,11 @@ $query .= "VALUES ({$post_category_id},'{$post_title}','{$post_author}',now(),'{
     </div>
 
     <div class="form-group">
-        <label for="post_status">Post Status</label>
-        <input type="text" class="form-control" name="post_status">
+        <select name="post_status" id="">
+            <option value="">Post status</option>
+            <option value="published">Published</option>
+            <option value="draft">Draft</option>
+        </select>
     </div>
 
     <div class="form-group">
@@ -76,7 +84,7 @@ $query .= "VALUES ({$post_category_id},'{$post_title}','{$post_author}',now(),'{
 
     <div class="form-group">
         <label for="post_content">Post Content</label>
-        <textarea class="form-control" name="post_content" id="" cols="30" rows="10"></textarea>
+        <textarea class="form-control" name="post_content" id="body" cols="30" rows="10"></textarea>
     </div>
 
     <div class="form-group">
@@ -85,4 +93,4 @@ $query .= "VALUES ({$post_category_id},'{$post_title}','{$post_author}',now(),'{
 
 </form>
 
-<?php //include "../includes/admin_footer.php"; ?>
+

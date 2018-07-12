@@ -18,7 +18,7 @@ if(isset($_GET['p_id'])){
     }
 
     if(isset($_POST['update_post'])) {
-        
+
         $post_author = $_POST['post_author'];
         $post_title = $_POST['post_title'];
         $post_category_id = $_POST['post_category'];
@@ -27,9 +27,9 @@ if(isset($_GET['p_id'])){
         $post_image_temp = $_FILES['image']['tmp_name'];
         $post_content = $_POST['post_content'];
         $post_tags = $_POST['post_tags'];
-        
+
         move_uploaded_file($post_image_temp, "../images/$post_image");
-        
+
             if(empty($post_image)) {    //jeigu nera sios funkcijos, updatinant komentara, paveiksliukas dings
                 $query = "SELECT * FROM posts WHERE post_id = $the_post_id ";
                 $select_post_image = mysqli_query($connection,$query);   //$select_image = mysqli_query($connection,$query);
@@ -37,7 +37,7 @@ if(isset($_GET['p_id'])){
                     $post_image = $row['post_image'];
                 }
             }
-        
+
             $query = "UPDATE posts SET ";
             $query .="post_title = '{$post_title}', ";          //post_title is duombazes, o sekantis $post_title is formos..
             $query .="post_category_id = '{$post_category_id}', ";
@@ -48,16 +48,18 @@ if(isset($_GET['p_id'])){
             $query .="post_content = '{$post_content}', ";
             $query .="post_image = '{$post_image}' ";   //cia kablelio priespaskutej eilutej neturi buti, kitaip nesuveiktu sekanti eilute su WHERE
             $query .="WHERE post_id = {$the_post_id} ";
-        
+
         $update_post = mysqli_query($connection,$query);
-        
+
         confirmQuery($update_post); //sita funkcija paimta is functions.php
         
+        echo "<p class='bg-success'>Post updated. <a href='../post.php?p_id={$the_post_id}'>View post</a> or <a href='posts.php'>Edit more posts</a></p>";
+
         //if(!$update_post) {     //jeigu del kazkokios priezasties confirmQuery blogai suveikia, reikia tureti sita eilute
           //  die("query failed" . mysqli_error($connection));
         //}
     }
-?>    
+?>
     <form action="" method="post" enctype="multipart/form-data">
 
     <div class="form-group">
@@ -70,7 +72,7 @@ if(isset($_GET['p_id'])){
         <?php
                 $query = "SELECT * FROM categories";
                 $select_categories = mysqli_query($connection,$query);
-        
+
                 confirmQuery($select_categories);
 
                 while($row = mysqli_fetch_assoc($select_categories)) {
@@ -87,10 +89,23 @@ if(isset($_GET['p_id'])){
         <input value="<?php echo $post_author; ?>" type="text" class="form-control" name="post_author">
     </div>
 
-    <div class="form-group">
-        <label for="post_status">Post Status</label>
-        <input value="<?php echo $post_status; ?>" type="text" class="form-control" name="post_status">
-    </div>
+       <div class="form-group">
+    <select name="post_status" id="">
+        <option value='<?php echo $post_status; ?>'><?php echo $post_status; ?></option>    <!-- padarem kad matytusi posto statusas kaip meniu pasirinkimas, kurio nereikia rasyti ranka prie posto editinimo-->
+        <?php
+            if($post_status == 'published'){        //kai uzdedam is draft i publish ir spaudziam update, pavirsta i published
+                echo "<option value='draft'>Draft</option>";
+            } else {
+               echo "<option value='published'>Publish</option>"; 
+            } 
+        ?>
+    </select>
+        </div>
+
+<!--    <div class="form-group">
+        <label for="post_status">Post Status</label>        //buvusi statini post status paverciame i automatini pasirinkima, kuri parasom auksciau esanciom kodo eilutem
+        <input value="<?php //echo $post_status; ?>" type="text" class="form-control" name="post_status">
+    </div>-->
 
     <div class="form-group">
         <img width="100" src="../images/<?php echo $post_image; ?>" alt="">
@@ -104,7 +119,7 @@ if(isset($_GET['p_id'])){
 
     <div class="form-group">
         <label for="post_content">Post Content</label>
-        <textarea class="form-control" name="post_content" id="" cols="30" rows="10"><?php echo $post_content; ?></textarea>
+        <textarea class="form-control" name="post_content" id="body" cols="30" rows="10"><?php echo $post_content; ?></textarea>
     </div>
 
     <div class="form-group">

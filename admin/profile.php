@@ -5,9 +5,9 @@
         $username = $_SESSION['username'];      //prisega verte prie kintamojo
         $query = "SELECT * FROM users WHERE username = '{$username}' ";
         $select_user_profile_query = mysqli_query($connection, $query);
-        
+
         while($row = mysqli_fetch_array($select_user_profile_query)) {    //sukuriam loop kad paziuretu per visus tuos values. kad istrauktume ta informacija
-            
+
         $user_id = $row['user_id'];
         $username = $row['username'];
         $user_password = $row['user_password'];
@@ -18,9 +18,9 @@
         $user_role = $row['user_role'];
         }
     }
-        
+
 ?>
-  
+
 <?php
 
     if(isset($_POST['edit_user'])) {
@@ -36,9 +36,9 @@
         $user_password = $_POST['user_password'];
 //    $post_date = date('d-m-y');
 //    $post_comment_count = 4;
-    
+
 //    move_uploaded_file($post_image_temp, "../images/$post_image" );
-        
+
             $query = "UPDATE users SET ";
             $query .="user_firstname = '{$user_firstname}', ";          //post_title is duombazes, o sekantis $post_title is formos..
             $query .="user_lastname = '{$user_lastname}', ";
@@ -47,7 +47,7 @@
             $query .="user_email = '{$user_email}', ";    //sitie tarpai tarp ', "; turi buti
             $query .="user_password = '{$user_password}' ";
             $query .= "WHERE username = '{$username}' ";
-    
+
         $edit_user_query = mysqli_query($connection,$query);
         confirmQuery($edit_user_query);
 }
@@ -55,14 +55,14 @@
 
 
 ?>
-   
+
     <div id="wrapper">
 
 
         <!-- Navigation -->
 <?php include "includes/admin_navigation.php"; ?>
-      
-       
+
+
         <div id="page-wrapper">
 
             <div class="container-fluid">
@@ -74,7 +74,7 @@
                             Welcome to admin
                             <small>Author</small>
                         </h1>
-            
+
  <form action="" method="post" enctype="multipart/form-data">
 
     <div class="form-group">
@@ -93,18 +93,18 @@
 
         <option value="subscriber"><?php echo $user_role; ?></option>
         <?php
-            
+
         if($user_role == 'admin'){
             echo "<option value='subscriber'>subscriber</option>";
         } else {
             echo "<option value='admin'>admin</option>";
         }
-        
+
         ?>
- 
-            
-            
-       
+
+
+
+
         </select>
     </div>
 
@@ -123,7 +123,7 @@
         <label for="post_content">Email</label>
         <input type="email" value="<?php echo $user_email; ?>" class="form-control" name="user_email">
     </div>
-    
+
     <div class="form-group">
         <label for="post_content">Password</label>
         <input type="password" value="<?php echo $user_password; ?>" class="form-control" name="user_password">
@@ -134,7 +134,7 @@
     </div>
 
 </form>
-                   
+
                     </div>
                 </div>
                 <!-- /.row -->
@@ -143,11 +143,11 @@
             <!-- /.container-fluid -->
 
         </div>
-        
-        
-        
-        
-        
+
+
+
+
+
         <!-- /#page-wrapper -->
 
 <?php include "includes/admin_footer.php"; ?>

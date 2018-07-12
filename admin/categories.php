@@ -4,8 +4,8 @@
 
         <!-- Navigation -->
 <?php include "includes/admin_navigation.php"; ?>
-      
-       
+
+
         <div id="page-wrapper">
 
             <div class="container-fluid">
@@ -17,11 +17,11 @@
                             Welcome to admin
                             <small>Author</small>
                         </h1>
-                        
+
                         <div class="col-xs-6">
-                          
+
                            <?php insert_categories(); ?>
-                            
+
                             <form action="" method="post">
                                <div class="form-group">
                                   <label for="cat-title">Add Category</label>
@@ -30,9 +30,9 @@
                                <div class="form-group">
                                    <input class="btn btn-primary" type="submit" name="submit" value="Add category">
                                </div>
-                                
+
                             </form>
-                            
+
         <?php   // update and include query
         if(isset($_GET['edit'])){
             $cat_id = $_GET['edit'];
@@ -50,15 +50,15 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    
+
 <?php   findAllCategories(); ?>
    <?php  deleteCategories(); ?>
-                                    
+
                                 </tbody>
                             </table>
-                            
+
                         </div>
-                       
+
                     </div>
                 </div>
                 <!-- /.row -->
@@ -67,11 +67,11 @@
             <!-- /.container-fluid -->
 
         </div>
-        
-        
-        
-        
-        
+
+
+
+
+
         <!-- /#page-wrapper -->
 
 <?php include "includes/admin_footer.php"; ?>
