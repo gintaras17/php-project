@@ -1,0 +1,22 @@
+{
+    "name": "gintaras/cms",
+    "require-dev": {
+        "phpmailer/phpmailer": "^6.0"
+    },
+
+    "autoload": {
+        "classmap": [
+            "classes"
+        ]
+    },
+    "authors": [
+        {
+            "name": "Gintaras V",
+            "email": "gintariuxz@gmail.com"
+        }
+    ],
+    "require": {
+        "pusher/pusher-php-server": "^3.2",
+        "vlucas/phpdotenv": "^2.5"
+    }
+}
