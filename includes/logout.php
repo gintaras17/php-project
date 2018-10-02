@@ -1,3 +1,4 @@
+<!--<?php //ob_start(); ?>-->	<!-- neaisku ar reikia -->
 <?php session_start(); ?>    <!--ijungiame sesija su sia eilute-->
 
 <?php
