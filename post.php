@@ -1,5 +1,5 @@
-
     <?php include "includes/db.php"; ?>
+    <?php include "./admin/functions.php"; ?>
     <?php include "includes/header.php"; ?>
 
     <!-- Navigation -->
@@ -7,10 +7,46 @@
     <?php include "includes/navigation.php"; ?>
 
     <?php
+        //like button getting
         if(isset($_POST['liked'])){
-            echo "<h1>Tai veikia</h1>";
-            //die();
+//            echo "patinka";
+            $post_id = $_POST['post_id'];
+            $user_id = $_POST['user_id'];
+
+            //1= fetching the right post
+            $query = "SELECT * FROM posts WHERE post_id=$post_id";
+            $postResult = mysqli_query($connection, $query);
+            $post = mysqli_fetch_array($postResult);
+            $likes = $post['likes'];
+
+            //2=update post with likes
+            mysqli_query($connection, "UPDATE posts SET likes=$likes+1 WHERE post_id=$post_id");
+
+            //3 = create likes for post
+            mysqli_query($connection, "INSERT INTO likes(user_id, post_id) VALUES($user_id, $post_id)");
+            exit();
         }
+        //like button getting end
+
+        //unliking button
+    if(isset($_POST['unliked'])){
+//        echo "nepatinka";
+        $post_id = $_POST['post_id'];
+        $user_id = $_POST['user_id'];
+
+
+        $query = "SELECT * FROM posts WHERE post_id=$post_id";
+        $postResult = mysqli_query($connection, $query);
+        $post = mysqli_fetch_array($postResult);
+        $likes = $post['likes'];
+
+        //2 = delete likes
+        mysqli_query($connection, "DELETE FROM likes WHERE post_id=$post_id AND user_id=$user_id");
+
+        //3 = update with decrementing likes
+        mysqli_query($connection, "UPDATE posts SET likes=$likes-1 WHERE post_id=$post_id");
+        exit();
+    }
     ?>
 
     <!-- Page Content -->
@@ -25,37 +61,40 @@
 
                 if(isset($_GET['p_id'])){   //array p_id. sitas get yra key. as esu in loop.
                     $the_post_id = $_GET['p_id'];   //we are catching here with variable $post_id, and need condition
-                    
-                    $view_query = "UPDATE posts SET post_views_count = post_views_count + 1 WHERE post_id = $the_post_id ";
-                    $send_query = mysqli_query($connection, $view_query);
-                    
-                        if(!$send_query) {
-                            die("query failed");
-                        }
-                
-                    //-> jeigu mes turi user_role sesija ir jeigu tai nustatyta ir jeigu mes prisilogin kaip admin, mes matysime postus.. <--//
-                    if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'admin' ) {
-                        $query = "SELECT * FROM posts WHERE post_id = $the_post_id ";
-                    
-                    } else {    //ir jeigu ne adminas, matys tik published postus
-                        $query = "SELECT * FROM posts WHERE post_id = $the_post_id AND post_status = 'published' ";
+
+                    $update_statement = mysqli_prepare($connection, "UPDATE posts SET post_views_count = post_views_count + 1 WHERE post_id = ?");
+                    mysqli_stmt_bind_param($update_statement, "i", $the_post_id);
+                    mysqli_stmt_execute($update_statement);
+
+                    if(!$update_statement){
+                        die("query failed");
                     }
 
-                        //$query = "SELECT * FROM posts WHERE post_id = $the_post_id "; //-- nes is cia mes rodome visa posta index faile ---//
-                        $select_all_posts_query = mysqli_query($connection,$query);
-                
-                            if(mysqli_num_rows($select_all_posts_query) < 1) {    //sitas if skaiciuos kiek eiluciu yra musu query..
-                                echo "<h2 class='text-center'>Postu nera</h2>";
-                            } else {
 
-                                while($row = mysqli_fetch_assoc($select_all_posts_query)) {
-                                    $post_id = $row['post_id'];
-                                    $post_title = $row['post_title'];
-                                    $post_user = $row['post_user'];
-                                    //$post_user = $row['post_user'];
-                                    $post_date = $row['post_date'];
-                                    $post_image = $row['post_image'];
-                                    $post_content = $row['post_content'];
+                    //-> jeigu mes turi user_role sesija ir jeigu tai nustatyta ir jeigu mes prisilogin kaip admin, mes matysime postus.. <--//
+                        if(isset($_SESSION['username']) && is_admin($_SESSION['username'])) {
+                            $stmt1 = mysqli_prepare($connection, "SELECT post_title, post_user, post_date, post_image, post_content FROM posts WHERE post_id = ?");
+                    } else {    //ir jeigu ne adminas, matys tik published postus
+                            $stmt2 = mysqli_prepare($connection, "SELECT post_title, post_user, post_date, post_image, post_content FROM posts WHERE post_id = ? AND post_status = ? ");
+                            $published = 'published';
+                    }
+
+
+                    if(isset($stmt1)){
+                        mysqli_stmt_bind_param($stmt1, "i", $the_post_id);
+                        mysqli_stmt_execute($stmt1);
+                        mysqli_stmt_bind_result($stmt1, $post_title, $post_user, $post_date, $post_image, $post_content);
+                        $stmt = $stmt1;
+                    } else {
+                        mysqli_stmt_bind_param($stmt2, "is", $the_post_id, $published);
+                        mysqli_stmt_execute($stmt2);
+                        mysqli_stmt_bind_result($stmt2, $post_title, $post_user, $post_date, $post_image, $post_content);
+                        $stmt = $stmt2;
+                    }
+
+
+                        while(mysqli_stmt_fetch($stmt)){
+
 
                                 ?>
 
@@ -72,8 +111,8 @@
                 </p>
                 <p><span class="glyphicon glyphicon-time"></span><?php echo $post_date ?></p>
                 <hr>
-                
-                <a href="post.php?p_id=<?php echo $post_id; ?>">
+
+                <a href="post.php?p_id=<?php echo $the_post_id; ?>">
                 <img class="img-responsive" src="/cms/images/<?php echo imagePlaceholder($post_image);?>" alt="">
                 </a>
 
@@ -82,25 +121,44 @@
 
                 <hr>
 
+                <?php   // freeing result
+                        mysqli_stmt_free_result($stmt);
+                ?>
+
+                <?php
+
+                       if(isLoggedIn()){ ?>
+
+                   <div class="row">
+                       <p class="pull-right"><a class="<?php echo userLikedThisPost($the_post_id) ? 'unlike' : 'like'; ?>" href="">
+                          <span class="glyphicon glyphicon-thumbs-up"
+                           data-toggle="tooltip" data-placement="top" title="<?php echo userLikedThisPost($the_post_id) ? 'I liked this before' : 'Want to like it?'; ?>">
+                           </span>
+                           <?php echo userLikedThisPost($the_post_id) ? ' Unlike' : ' Like'; ?></a></p>
+                   </div>
+
+                <?php } else { ?>
+                           <div class="row">
+                               <p class="pull-right">You need to <a href="/cms/login.php">Login</a> to like </p>
+                           </div>
+
+                       <?php }
+
+                ?>
+
                 <div class="row">
-                    <p class="pull-right"><a class="like" href="#"><span class="glyphicon glyphicon-thumbs-up"></span>Like</a></p>
+                    <p class="pull-right likes">Like: <?php getPostlikes($the_post_id); ?></p>
                 </div>
-                <div class="row">
-                    <p class="pull-right">Like: 10</a></p>
-                </div>
+
                 <div class="clearfix"></div>
 
-        <?php }
-                    
-                
-                
-        ?>
+        <?php }       ?>
 
           <!-- Blog Comments -->
          <?php
 
             if(isset($_POST['create_comment'])){
-                    
+
                 $the_post_id = $_GET['p_id'];
                 $comment_author = $_POST['comment_author'];
                 $comment_email = $_POST['comment_email'];
@@ -126,7 +184,7 @@
                 }
             }
 
-                
+
 
                 ?>
 
@@ -183,8 +241,8 @@
                     </div>
                 </div>
 
-        <?php   }  } } else {
-                    
+        <?php   }  }  else {
+
                     header("Location: index.php");
                 }
                 ?>
@@ -195,7 +253,7 @@
 
         <?php include "includes/sidebar.php"; ?>
 
-        </div>
+       </div>
         <!-- /.row -->
 
         <hr>
@@ -204,10 +262,13 @@
 <!--            siuo skriptu tikriname ar veikia mygtukas Like-->
         <script>
             $(document).ready(function(){
+                
+                $("[data-toggle='tooltip']").tooltip();
 
                     var post_id = <?php echo $the_post_id; ?>;
-                    var user_id = 15;
+                    var user_id = <?php echo loggedInUserId(); ?>;
 
+                    //liking
                 $('.like').click(function(){
                     //console.log("Tai veikia")   //sia eilute tikriname ar veikia
                     $.ajax({
@@ -215,6 +276,20 @@
                         type: 'post',   //tikrinsim ar duomenys bus post tipo
                         data: {
                             'liked': 1,   //cia tiesiog paziuresim ar yra kokia verte - nezinau kas cia per velnias:))
+                            'post_id': post_id,
+                            'user_id': user_id
+                        }
+                    });
+                });
+
+                //unliking
+                $('.unlike').click(function(){
+                    //console.log("Tai veikia")   //sia eilute tikriname ar veikia
+                    $.ajax({
+                        url: "/cms/post.php?p_id=<?php echo $the_post_id; ?>",   //su php tikrinsim ar post reguest bus issiustas
+                        type: 'post',   //tikrinsim ar duomenys bus post tipo
+                        data: {
+                            'unliked': 1,   //cia tiesiog paziuresim ar yra kokia verte - nezinau kas cia per velnias:))
                             'post_id': post_id,
                             'user_id': user_id
                         }
