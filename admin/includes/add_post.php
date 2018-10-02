@@ -3,7 +3,8 @@
 
 if(isset($_POST['create_post'])) {
     $post_title = escape($_POST['title']);
-    $post_author = escape($_POST['post_author']);
+    $post_user = escape($_POST['post_user']);
+    $user_id = $_SESSION['user_id'];
     $post_category_id = $_POST['post_category'];
     $post_status = $_POST['post_status'];
 
@@ -17,8 +18,8 @@ if(isset($_POST['create_post'])) {
 
     move_uploaded_file($post_image_temp, "../images/$post_image" );
 
-    $query = "INSERT INTO posts (post_category_id, post_title, post_author, post_date,post_image,post_content,post_tags,post_status) ";
-    $query .= "VALUES ({$post_category_id},'{$post_title}','{$post_author}',now(),'{$post_image}','{$post_content}','{$post_tags}', '{$post_status}') ";    //visi kintamieji cia paimti is auksciau esancios funkcijos su isset. ir visi kintamieji yra kabutese '', nes jie yra strings, isskyrus nereikia pirmajam post_category_id, nes tai ne string, o number
+    $query = "INSERT INTO posts (user_id, post_category_id, post_title, post_user, post_date,post_image,post_content,post_tags,post_status) ";
+    $query .= "VALUES ('{$user_id}',{$post_category_id},'{$post_title}','{$post_user}',now(),'{$post_image}','{$post_content}','{$post_tags}', '{$post_status}') ";    //visi kintamieji cia paimti is auksciau esancios funkcijos su isset. ir visi kintamieji yra kabutese '', nes jie yra strings, isskyrus nereikia pirmajam post_category_id, nes tai ne string, o number
     //taip pat antroje $query eiluteje yra now() funkcija -->ji turi daug alternatyvu, bet tai kita tema<--, kuri padaro grazia data duombazej -->galima apie ja paskaityti php.net<--
 
     $create_post_query = mysqli_query($connection, $query);
@@ -43,6 +44,7 @@ if(isset($_POST['create_post'])) {
     </div>
 
     <div class="form-group">
+        <label for="category">Category</label>
         <select name="post_category" id="">        <!--zemiau esantis option value bus reikalingas sitam post_category, todel butina ji cia tureti-->
         <?php
                 $query = "SELECT * FROM categories";
@@ -59,14 +61,50 @@ if(isset($_POST['create_post'])) {
         </select>
     </div>
 
-    <div class="form-group">
+<!--     <div class="form-group">
         <label for="title">Post Author</label>
-        <input type="text" class="form-control" name="author">
-    </div>
+        <input type="text" class="form-control" name="post_user">
+    </div> -->
+
+        <div class="form-group">
+        <label for="users">Users</label>
+
+        <!-- //Jeigu noretume pagerintos formos, kad vietoj username rasyti kita varda su javascript  -->
+        <!-- <script type="text/javascript">
+function showfield(name){
+  if(name=='Other')document.getElementById('author').innerHTML='Other: <input type="text" name="other" placeholder="write name" />';
+  else document.getElementById('author').innerHTML='';
+}
+</script>
+
+<select name="post_user" id="user" onchange="showfield(this.options[this.selectedIndex].value)">
+<option selected="selected">Please select ...</option> -->
+<!-- //javascript pabaiga -->
+
+        <!-- <select name="post_user" id=""> -->
+            <select name="post_user" id="">
+        <?php
+                $query = "SELECT * FROM users";
+                $select_users = mysqli_query($connection,$query);
+
+                confirmQuery($select_users);
+
+                while($row = mysqli_fetch_assoc($select_users)) {
+                $user_id = $row['user_id'];
+                $username = $row['username'];
+                    echo "<option value='{$username}'>{$username}</option>";
+                }
+        ?>
+
+        <!-- <option value="Other">Other</option>   //prie to pacio javascript kodo -->   
+        </select>
+<!-- <div id="author"></div>   //prie to pacio javascript kodo -->
+
+        </div>
 
     <div class="form-group">
         <select name="post_status" id="">
-            <option value="">Post status</option>
+            <option value="">Post status..</option>
             <option value="published">Published</option>
             <option value="draft">Draft</option>
         </select>

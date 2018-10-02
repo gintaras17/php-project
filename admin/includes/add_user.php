@@ -17,6 +17,8 @@ if(isset($_POST['create_user'])) {
 
 //    move_uploaded_file($post_image_temp, "../images/$post_image" );
 
+    $user_password = password_hash( $user_password, PASSWORD_BCRYPT, array('cost' => 10));  //sistemos pagerinimas
+
 $query = "INSERT INTO users (user_firstname, user_lastname, user_role,username,user_email,user_password) ";
 $query .= "VALUES ('{$user_firstname}','{$user_lastname}','{$user_role}','{$username}','{$user_email}','{$user_password}') ";    //visi kintamieji cia paimti is auksciau esancios funkcijos su isset. ir visi kintamieji yra kabutese '', nes jie yra strings, isskyrus nereikia pirmajam post_category_id, nes tai ne string, o number
     //taip pat antroje $query eiluteje yra now() funkcija -->ji turi daug alternatyvu, bet tai kita tema<--, kuri padaro grazia data duombazej -->galima apie ja paskaityti php.net<--
@@ -27,7 +29,6 @@ $query .= "VALUES ('{$user_firstname}','{$user_lastname}','{$user_role}','{$user
 
         echo "User created: " . " " . "<a href='users.php'>View users</a> ";
 }
-
 
 ?>
 
@@ -43,7 +44,6 @@ $query .= "VALUES ('{$user_firstname}','{$user_lastname}','{$user_role}','{$user
         <input type="text" class="form-control" name="user_lastname">
     </div>
 
-
     <div class="form-group">
         <select name="user_role" id="">        <!--zemiau esantis option value bus reikalingas sitam post_category, todel butina ji cia tureti-->
 
@@ -53,7 +53,6 @@ $query .= "VALUES ('{$user_firstname}','{$user_lastname}','{$user_role}','{$user
 
         </select>
     </div>
-
 
 <!--    <div class="form-group">
         <label for="post_image">Post Image</label>

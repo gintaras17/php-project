@@ -6,7 +6,7 @@ if(isset($_GET['p_id'])){
     $select_posts_by_id = mysqli_query($connection,$query);
     while($row = mysqli_fetch_assoc($select_posts_by_id)){
         $post_id = $row['post_id'];
-        $post_author = $row['post_author'];
+        $post_user = $row['post_user'];
         $post_title = $row['post_title'];
         $post_category_id = $row['post_category_id'];
         $post_status = $row['post_status'];
@@ -19,7 +19,7 @@ if(isset($_GET['p_id'])){
 
     if(isset($_POST['update_post'])) {
 
-        $post_author = $_POST['post_author'];
+        $post_user = $_POST['post_user'];
         $post_title = $_POST['post_title'];
         $post_category_id = $_POST['post_category'];
         $post_status = $_POST['post_status'];
@@ -42,7 +42,7 @@ if(isset($_GET['p_id'])){
             $query .="post_title = '{$post_title}', ";          //post_title is duombazes, o sekantis $post_title is formos..
             $query .="post_category_id = '{$post_category_id}', ";
             $query .="post_date = now(), ";     //sitas now() mums duos datą, kuri yra siuo metu.
-            $query .="post_author = '{$post_author}', ";
+            $query .="post_user = '{$post_user}', ";
             $query .="post_status = '{$post_status}', ";    //sitie tarpai tarp ', "; turi buti
             $query .="post_tags = '{$post_tags}', ";
             $query .="post_content = '{$post_content}', ";
@@ -68,6 +68,7 @@ if(isset($_GET['p_id'])){
     </div>
 
     <div class="form-group">
+        <label for="categories">Categories</label>
         <select name="post_category" id="">        <!--zemiau esantis option value bus reikalingas sitam post_category, todel butina ji cia tureti-->
         <?php
                 $query = "SELECT * FROM categories";
@@ -78,16 +79,43 @@ if(isset($_GET['p_id'])){
                 while($row = mysqli_fetch_assoc($select_categories)) {
                 $cat_id = $row['cat_id'];
                 $cat_title = $row['cat_title'];
-                    echo "<option value='$cat_id'>{$cat_title}</option>";       //sita, reikalingas auksciau esantis name post_category
+                
+                    if ($cat_id == $post_category_id) {
+                        echo "<option selected value='{$cat_id}'>{$cat_title}</option>";
+                    } else {
+                        echo "<option value='$cat_id'>{$cat_title}</option>";       //sita, reikalingas auksciau esantis name post_category
+                    }
                 }
+                
         ?>
         </select>
     </div>
 
-    <div class="form-group">
+            <div class="form-group">
+        <label for="users">Users</label>
+            <select name="post_user" id="">
+
+                <?php echo "<option value='{$post_user}'>{$post_user}</option>"; ?>
+        <?php
+                $query = "SELECT * FROM users";
+                $select_users = mysqli_query($connection,$query);
+
+                confirmQuery($select_users);
+
+                while($row = mysqli_fetch_assoc($select_users)) {
+                $user_id = $row['user_id'];
+                $username = $row['username'];
+                    echo "<option value='{$username}'>{$username}</option>";
+                }
+        ?>
+
+        </select>
+        </div>
+
+<!--     <div class="form-group">
         <label for="title">Post Author</label>
-        <input value="<?php echo $post_author; ?>" type="text" class="form-control" name="post_author">
-    </div>
+        <input value="<?php //echo $post_user; ?>" type="text" class="form-control" name="post_user" readonly="read">
+    </div> -->
 
        <div class="form-group">
     <select name="post_status" id="">
@@ -120,6 +148,8 @@ if(isset($_GET['p_id'])){
     <div class="form-group">
         <label for="post_content">Post Content</label>
         <textarea class="form-control" name="post_content" id="body" cols="30" rows="10"><?php echo $post_content; ?></textarea>
+                                                                                            <!-- jeigu koreguojant posta kelis kartus paspausim is naujos eil.bet neparasysim nieko ir spausim update, gali buti kad ismes \r\n rezultatus, tokiu atveju.. -->
+                                                                                            <!-- echo str_replace(search, replace, subject) padarysim str_replace('\r\n', '<br>', $post_content) -->
     </div>
 
     <div class="form-group">

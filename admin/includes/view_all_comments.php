@@ -1,6 +1,52 @@
+<?php
+
+if(isset($_POST['checkBoxArray'])) {
+    foreach($_POST['checkBoxArray'] as $commentValueId ){    //tai loopas per checkboxus
+        
+        $bulk_options = $_POST['bulk_options']; //priregistruojame zemiau padaryta name='bulk_options' prie value. pratestinti galima uzrasius pries eilute echo komanda
+            switch($bulk_options) {     //siuo switch statment compare one condition with multiple statements. patikrinam bulk_options
+                case 'approved':
+                    $query = "UPDATE comments SET comment_status = '{$bulk_options}' WHERE comment_id = {$commentValueId} "; //siuo query updatinam.. bulk options paimtas is 5 eileje esancio kintamojo
+                    $update_to_approved_status = mysqli_query($connection, $query);
+                    confirmQuery($update_to_approved_status);
+                    break;  //jeigu randa case'a, breakas sustabdo
+                    
+                case 'unapproved':
+                    $query = "UPDATE comments SET comment_status = '{$bulk_options}' WHERE comment_id = {$commentValueId} ";
+                    $update_to_unapproved_status = mysqli_query($connection, $query);
+                    confirmQuery($update_to_unapproved_status);
+                    break;
+                    
+                 case 'delete':
+                    $query = "DELETE FROM comments WHERE comment_id = {$commentValueId} ";
+                    $update_to_delete_status = mysqli_query($connection, $query);
+                    confirmQuery($update_to_delete_status);
+                    break;  //jeigu randa case'a, breakas sustabdo
+            }
+    }
+}
+?>
+
+<form action="" method='post'>
+
                         <table class="table table-bordered table-hover">
+                        <div id="bulkOptionsContainer" class="col-xs-4">
+
+                            <select class="form-control" name="bulk_options" id="">
+                                <option value="">Select options</option>
+                                <option value="approved">Approve</option>
+                                <option value="unapproved">Unapprove</option>
+                                <option value="delete">Delete</option>
+                            </select>
+
+                        </div>
+
+            <div class="col-xs-4">
+            <input type="submit" name="submit" class="btn btn-success" value="Apply">
+            </div>
                             <thead>
                                 <tr>
+                                    <th><input id="selectAllBoxes" type="checkbox"></th>
                                     <th>Id</th>
                                     <th>Author</th>
                                     <th>Comment</th>
@@ -28,6 +74,13 @@
         $comment_date = $row['comment_date'];
 
         echo "<tr>";
+
+        ?>
+
+    <td><input class='checkBoxes' type='checkbox' name='checkBoxArray[]' value='<?php echo $comment_id; ?>'></td>
+
+    <?php
+
         echo "<td>$comment_id</td>";    //situ turi buti toks pats skaicius kaip ir auksciau esanciu table bloke
         echo "<td>$comment_author</td>";
         echo "<td>$comment_content</td>";
@@ -62,8 +115,9 @@
     ?>
 
 
-    </tbody>
-</table>
+                                </tbody>
+                        </table>
+</form>
 
 <?php
 if(isset($_GET['approve'])){                                         //istrinam komentarus is posts.php

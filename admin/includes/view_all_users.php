@@ -64,25 +64,33 @@
 </table>
 
 <?php
-if(isset($_GET['change_to_admin'])){                                         //istrinam komentarus is posts.php
-    $the_user_id = $_GET['change_to_admin'];
-    $query = "UPDATE users SET user_role = 'admin' WHERE user_id = $the_user_id ";   //kiek suprantu, skliausteliai the_post_id nera reikalavimas..
-    $change_to_admin_query = mysqli_query($connection, $query);
-    header("Location: users.php");   //sitas daro puslapio reloada, kai tik istrinam, sius dar karta comments.php puslapi is naujo.
-}
+            //**  kad tik adminas galetu keisti userio role... **//
+    if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'admin' ) {
+            
+        if(isset($_GET['change_to_admin'])){
+            $the_user_id = $_GET['change_to_admin'];
+            $query = "UPDATE users SET user_role = 'admin' WHERE user_id = $the_user_id ";
+            $change_to_admin_query = mysqli_query($connection, $query);
+            header("Location: users.php");
+        }
+    }
 ?>
 
 <?php
-if(isset($_GET['change_to_sub'])){                                         //istrinam komentarus is posts.php
-    $the_user_id = $_GET['change_to_sub'];
-    $query = "UPDATE users SET user_role = 'subscriber' WHERE user_id = $the_user_id ";   //kiek suprantu, skliausteliai the_post_id nera reikalavimas..
-    $change_to_sub_query = mysqli_query($connection, $query);
-    header("Location: users.php");   //sitas daro puslapio reloada, kai tik istrinam, sius dar karta comments.php puslapi is naujo.
-}
+            //** kad tik adminas galetu keisti userio role... **//
+    if (isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'admin') {
+        
+        if(isset($_GET['change_to_sub'])){
+            $the_user_id = $_GET['change_to_sub'];
+            $query = "UPDATE users SET user_role = 'subscriber' WHERE user_id = $the_user_id ";
+            $change_to_sub_query = mysqli_query($connection, $query);
+            header("Location: users.php");
+        }
+    }
 ?>
 
 <?php
-if(isset($_GET['delete'])){                                         //istrinam komentarus is posts.php
+if(isset($_GET['delete'])){
             //apsauga, kad negaletu is url adreso istrinti useriu//
     if(isset($_SESSION['user_role'])) {     //jeigu butu tik sita eilute, tai bet koks subscriberis galetu istrinti userius. <-turbut gerai issireiskiau..
         
@@ -91,12 +99,14 @@ if(isset($_GET['delete'])){                                         //istrinam k
             $the_user_id = mysqli_real_escape_string($connection, $_GET['delete']);     //cia kazkoks valymo kodas, kuris neleidzia is url istrinti useriu..
             //apsaugos pabaiga//
         
-    $query = "DELETE FROM users WHERE user_id = {$the_user_id} ";   //kiek suprantu, skliausteliai the_post_id nera reikalavimas..
+    $query = "DELETE FROM users WHERE user_id = {$the_user_id} ";
     $delete_user_query = mysqli_query($connection, $query);
-    header("Location: users.php");   //sitas daro puslapio reloada, kai tik istrinam, sius dar karta comments.php puslapi is naujo.
+    header("Location: users.php");
             
         }
         
     }
 }
+
+
 ?>

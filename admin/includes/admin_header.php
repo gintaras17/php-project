@@ -1,5 +1,5 @@
 <?php ob_start(); ?>    <!--//sita funkcija reikalinga tam, kad siustu info po viena, o ne viska is karto, kitaip gali gauti errora. ir jeigu sita eilute butu zemiau kazkur, tuomet iejimas per admin butu galimas be prisijungimo-->
-<?php session_start(); ?>
+<?php session_start(); ?>    <!-- sita eilute padeda isiloginti, jeigu jos nebutu, negaletume prisijugti -->
 <?php include "../includes/db.php" ?>
 <?php include "./functions.php" ?>
 
@@ -24,7 +24,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>SB Admin - Bootstrap Admin Template</title>
+    <title>Gintaro CMS - Blog test</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -41,6 +41,8 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+    
+    <link href="css/styles.css" rel="stylesheet">
 
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 

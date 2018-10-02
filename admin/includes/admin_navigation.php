@@ -13,6 +13,10 @@
             </div>
             <!-- Top Menu Items -->
             <ul class="nav navbar-right top-nav">
+
+                <!--<li><a href="">Users Online: <?php //echo users_online(); ?></a></li>-->     <!-- be global connection function.php faile 5 eilutej ko gero sito nebutu galima padaryti -->
+                <li><a href="">Users Online: <span class="usersonline"></span></a></li>
+
                <li><a href="../index.php">Home site</a></li>
 
 
@@ -43,8 +47,16 @@
             <div class="collapse navbar-collapse navbar-ex1-collapse">
                 <ul class="nav navbar-nav side-nav">
                     <li>
-                        <a href="index.php"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a>
+                        <a href="index.php"><i class="fa fa-fw fa-dashboard"></i> My data</a>
                     </li>
+                    
+                    <?php if(is_admin()): ?>
+                    
+                    <li>
+                    <a href="dashboard.php"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a>
+                    </li>
+                    
+                    <?php endif ?>
 
                     <li>
                         <a href="javascript:;" data-toggle="collapse" data-target="#posts_dropdown"><i class="fa fa-fw fa-arrows-v"></i> Posts <i class="fa fa-fw fa-caret-down"></i></a>
