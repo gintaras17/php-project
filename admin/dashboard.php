@@ -1,13 +1,5 @@
+
 <?php include "includes/admin_header.php"; ?>
-<?php
-    $post_count = count_records(get_all_user_posts());
-    $comment_count = count_records(get_all_posts_user_comments());
-    $category_count = count_records(get_all_user_categories());
-    $post_published_count = count_records(get_all_user_published_posts());
-    $post_draft_count = count_records(get_all_user_draft_posts());
-    $approved_comment_count = count_records(get_all_user_approved_posts_comments());
-    $unapproved_comment_count = count_records(get_all_user_unapproved_posts_comments());
-?>
 
     <div id="wrapper">
 
@@ -23,24 +15,17 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <h1 class="page-header">
-                            <small>Welcome to admin</small>
+                            Welcome to the Admin dashboard
 
-                            
-                            <?php echo ucfirst(get_user_name()); ?>
-                            <?php //echo $_SESSION['username'] ?>
-                           
-<!--
-                            <small>
-                            <?php //echo $_SESSION['user_role'] ?>
-                            </small>
--->
+                            <small><?php echo $_SESSION['username'] ?></small>
+                            <small>- <?php echo $_SESSION['user_role'] ?></small>
                         </h1>
                     </div>
                 </div>
                 <!-- /.row -->
 
         <div class="row">
-    <div class="col-lg-4 col-md-6">
+    <div class="col-lg-3 col-md-6">
         <div class="panel panel-primary">
             <div class="panel-heading">
                 <div class="row">
@@ -49,9 +34,10 @@
                     </div>
                     <div class="col-xs-9 text-right">
 
-                    <?php echo "<div class='huge'>".$post_count."</div>"; ?>
+
         
-<!--            <div class='huge'><?php //echo $post_count = recordCount('posts'); ?></div>-->    <!--sita gavome perdare anksciau buvusia funkcija ir ja padeje i functions 113 eile, $post count sitaip paliekame, nes cia zemiau 170eilej turime ta $post cont, kuris tures buti apibreztas -->
+
+            <div class='huge'><?php echo $post_count = recordCount('posts'); ?></div>   <!-- sita gavome perdare anksciau buvusia funkcija ir ja padeje i functions 113 eile, $post count sitaip paliekame, nes cia zemiau 170eilej turime ta $post cont, kuris tures buti apibreztas -->
 
                         <div>Posts</div>
                     </div>
@@ -66,7 +52,7 @@
             </a>
         </div>
     </div>
-    <div class="col-lg-4 col-md-6">
+    <div class="col-lg-3 col-md-6">
         <div class="panel panel-green">
             <div class="panel-heading">
                 <div class="row">
@@ -78,12 +64,11 @@
     // $query = "SELECT * FROM comments";                            //vietoje
     // $select_all_comments =/mysqli_query($connection,$query);      //sios
     // $comment_count = mysqli_num_rows($select_all_comments);       //eilutes
-    //     echo "<div class='huge'>{$comment_count}</div>";          //idedame paprastesne i 78 eilute zemiau
+    //     echo "<div class='huge'>{$comment_count}</div>";          //idedame paprastesne i 68 eilute zemiau
     //?> -->
-        <?php
-//        <div class='huge'><?php echo $comment_count = recordCount('comments'); <!--</div>--> <!-- vietoj sitos eilute 82-->
-        echo "<div class='huge'>{$comment_count}</div>";
-?>
+
+        <div class='huge'><?php echo $comment_count = recordCount('comments'); ?></div>
+
                       <div>Comments</div>
                     </div>
                 </div>
@@ -97,8 +82,36 @@
             </a>
         </div>
     </div>
-    
-    <div class="col-lg-4 col-md-6">
+    <div class="col-lg-3 col-md-6">
+        <div class="panel panel-yellow">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-xs-3">
+                        <i class="fa fa-user fa-5x"></i>
+                    </div>
+                    <div class="col-xs-9 text-right">
+<!--      <?php
+    // $query = "SELECT * FROM users";
+    // $select_all_users = mysqli_query($connection,$query);
+    // $user_count = mysqli_num_rows($select_all_users);
+    //     echo "<div class='huge'>{$user_count}</div>";
+    ?> -->
+
+        <div class='huge'><?php echo $user_count = recordCount('users'); ?></div>
+                        <div> Users</div>
+                    </div>
+                </div>
+            </div>
+            <a href="users.php">
+                <div class="panel-footer">
+                    <span class="pull-left">View Details</span>
+                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                    <div class="clearfix"></div>
+                </div>
+            </a>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
         <div class="panel panel-red">
             <div class="panel-heading">
                 <div class="row">
@@ -128,15 +141,14 @@
         // $query = "SELECT * FROM posts WHERE post_status = 'published'";
         // $select_all_published_posts = mysqli_query($connection,$query);
         // $post_published_count = mysqli_num_rows($select_all_published_posts);
-        //**** is 124 padarem 128***///
-        //$post_published_count = checkStatus('posts','post_status','published');     //sios visa funkcija function.php 275
-                //sitos eilutes pakeistos pagal useri ir nukeltos i virsu
+        //**** is 139 padarem 143***///
+        $post_published_count = checkStatus('posts','post_status','published');     //sios visa funkcija function.php 123
                 
-        //$post_draft_count = checkStatus('posts','post_status','draft');
-
+        $post_draft_count = checkStatus('posts','post_status','draft');
                 
-        //$unapproved_comment_count = checkStatus('comments','comment_status','unapproved');        //**sito man rodos funkcijos pas mane nera...
-        //nukelta i virsu
+        $unapproved_comment_count = checkStatus('comments','comment_status','unapproved');        //**sito man rodos funkcijos pas mane nera...
+        
+        $subscriber_count = checkUserRole('users','user_role','subscriber');
 
     ?>
 
@@ -151,9 +163,9 @@
 
                     //auksciau esantys $query padeda is duombazes gauti issaugotus duomenis is postu, komentaru ir useriu ir juos taip pat parodyti chartuose, kuriu kodas paimtas is google charts
             <?php   //javascript viduje iterpiame php kodu eilutes, kurios pereina per rezultatus naudodamos for loop ir taip atsiradanda gyvi rodykliai, kurie atvaizduojami spalvotuose rodikliuose
-                $element_text = ['All posts', 'Active posts', 'Draft posts', 'Comments', 'Approved comments', 'Pending comments', 'Categories'];
-                $element_count = [ $post_count, $post_published_count, $post_draft_count, $comment_count, $approved_comment_count, $unapproved_comment_count, $category_count];
-            for($i = 0; $i < 7; $i++) {
+                $element_text = ['All posts', 'Active posts', 'Draft posts', 'Comments', 'Pending comments', 'Users', 'Subscribers', 'Categories'];
+                $element_count = [ $post_count, $post_published_count, $post_draft_count, $comment_count, $unapproved_comment_count, $user_count, $subscriber_count, $category_count];
+            for($i = 0; $i < 8; $i++) {
                 echo "['{$element_text[$i]}'" . "," . "{$element_count[$i]}],";     //
             }
             ?>

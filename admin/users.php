@@ -2,6 +2,12 @@
 
     <div id="wrapper">
 
+        <?php
+            if (!is_admin($_SESSION['username'])) {  //kadangi functions.php 139 padarem su true ir false..
+                header("Location: index.php");
+            }
+        ?>
+
         <!-- Navigation -->
 <?php include "includes/admin_navigation.php"; ?>
 
@@ -15,7 +21,7 @@
                     <div class="col-lg-12">
                         <h1 class="page-header">
                             Welcome to admin
-                            <small>Author</small>
+                            <small><?php echo $_SESSION['username'] ?></small>
                         </h1>
 
                     <?php

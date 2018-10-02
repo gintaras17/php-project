@@ -14,8 +14,8 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <h1 class="page-header">
-                            Welcome to admin
-                            <small>Author</small>
+                            Welcome to comments
+                            <small><?php echo $_SESSION['username'] ?></small>
                         </h1>
 
                     <?php
@@ -56,11 +56,9 @@
             <!-- /.container-fluid -->
 
         </div>
-
-
-
-
-
         <!-- /#page-wrapper -->
+        
+    </div>
+        <!-- /#wrapper -->
 
 <?php include "includes/admin_footer.php"; ?>

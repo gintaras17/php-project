@@ -26,7 +26,7 @@
     if(isset($_POST['edit_user'])) {
         $user_firstname = $_POST['user_firstname'];
         $user_lastname = $_POST['user_lastname'];
-        $user_role = $_POST['user_role'];
+ //       $user_role = $_POST['user_role'];
 
     //    $post_image = $_FILES['image']['name'];
     //    $post_image_temp = $_FILES['image']['tmp_name'];
@@ -39,10 +39,19 @@
 
 //    move_uploaded_file($post_image_temp, "../images/$post_image" );
 
+        $query = "SELECT randSalt FROM users";
+        $select_randsalt_query = mysqli_query($connection, $query);
+        if(!$select_randsalt_query) {
+            die("Query failed" . mysqli_error($connection));
+        }
+            $row = mysqli_fetch_array($select_randsalt_query);
+            $salt = $row['randSalt'];
+            $hashed_password = crypt($user_password, $salt);
+
             $query = "UPDATE users SET ";
             $query .="user_firstname = '{$user_firstname}', ";          //post_title is duombazes, o sekantis $post_title is formos..
             $query .="user_lastname = '{$user_lastname}', ";
-            $query .="user_role = '$user_role', ";     //sitas now() mums duos datą, kuri yra siuo metu.
+ //           $query .="user_role = '$user_role', ";     //sitas now() mums duos datą, kuri yra siuo metu.
             $query .="username = '{$username}', ";
             $query .="user_email = '{$user_email}', ";    //sitie tarpai tarp ', "; turi buti
             $query .="user_password = '{$user_password}' ";
@@ -72,7 +81,7 @@
                     <div class="col-lg-12">
                         <h1 class="page-header">
                             Welcome to admin
-                            <small>Author</small>
+                            <small><?php echo $_SESSION['username'] ?></small>
                         </h1>
 
  <form action="" method="post" enctype="multipart/form-data">
@@ -88,31 +97,23 @@
     </div>
 
 
-    <div class="form-group">
-        <select name="user_role" id="">        <!--zemiau esantis option value bus reikalingas sitam post_category, todel butina ji cia tureti-->
+<!--    <div class="form-group">
+        <select name="user_role" id="">-->        <!--zemiau esantis option value bus reikalingas sitam post_category, todel butina ji cia tureti-->
 
-        <option value="subscriber"><?php echo $user_role; ?></option>
+ <!--       <option value="subscriber"><?php //echo $user_role; ?></option>
         <?php
 
-        if($user_role == 'admin'){
-            echo "<option value='subscriber'>subscriber</option>";
-        } else {
-            echo "<option value='admin'>admin</option>";
-        }
+        // if($user_role == 'admin'){
+        //     echo "<option value='subscriber'>subscriber</option>";
+        // } else {
+        //     echo "<option value='admin'>admin</option>";
+        // }
 
         ?>
 
-
-
-
         </select>
-    </div>
+                    </div>-->
 
-
-<!--    <div class="form-group">
-        <label for="post_image">Post Image</label>
-        <input type="file" name="image">
-    </div>-->
 
     <div class="form-group">
         <label for="post_tages">Username</label>
@@ -126,7 +127,7 @@
 
     <div class="form-group">
         <label for="post_content">Password</label>
-        <input type="password" value="<?php echo $user_password; ?>" class="form-control" name="user_password">
+        <input autocomplete="off" type="password" class="form-control" name="user_password">
     </div>
 
     <div class="form-group">
@@ -136,18 +137,21 @@
 </form>
 
                     </div>
+                    <!-- col-lg-12 -->
+                    
                 </div>
                 <!-- /.row -->
 
             </div>
-            <!-- /.container-fluid -->
-
+        <!-- /.container-fluid -->        
+        
         </div>
+         <!-- /#page-wrapper -->
+         
+    </div>
+    <!--  wrapper  -->
 
 
 
-
-
-        <!-- /#page-wrapper -->
 
 <?php include "includes/admin_footer.php"; ?>
