@@ -1,4 +1,4 @@
 # php-project
 cms project
 
-Mokausi daryti CMS su PHP ir mySQL..
+Mokiausi daryti CMS su PHP ir mySQL..
