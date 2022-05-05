@@ -1,7 +1,7 @@
 {
     "name": "gintaras/cms",
     "require-dev": {
-        "phpmailer/phpmailer": "^6.0"
+        "phpmailer/phpmailer": "^6.5"
     },
 
     "autoload": {
